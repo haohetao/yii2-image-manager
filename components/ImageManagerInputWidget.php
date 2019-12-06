@@ -1,14 +1,14 @@
 <?php
 
-namespace noam148\imagemanager\components;
+namespace haohetao\imagemanager\components;
 
 use Yii;
 use yii\widgets\InputWidget;
 use yii\helpers\Html;
 use yii\helpers\Json;
 use yii\helpers\Url;
-use noam148\imagemanager\models\ImageManager;
-use noam148\imagemanager\assets\ImageManagerInputAsset;
+use haohetao\imagemanager\models\ImageManager;
+use haohetao\imagemanager\assets\ImageManagerInputAsset;
 
 class ImageManagerInputWidget extends InputWidget {
 

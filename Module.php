@@ -1,12 +1,12 @@
 <?php
 
-namespace noam148\imagemanager;
+namespace haohetao\imagemanager;
 
 use Yii;
 use yii\base\UnknownClassException;
 use yii\base\InvalidConfigException;
 use yii\web\AssetManager;
-use noam148\imagemanager\assets\ImageManagerModuleAsset;
+use haohetao\imagemanager\assets\ImageManagerModuleAsset;
 
 /**
  * imagemanager module definition class
