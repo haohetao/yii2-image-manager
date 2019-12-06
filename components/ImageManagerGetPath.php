@@ -57,7 +57,7 @@ class ImageManagerGetPath extends Component {
         }
 		// Initialize the compontent with the configuration loaded from config.php
 		\Yii::$app->set('imageresize', [
-			'class' => 'haohetao\imageresize\ImageResize',
+			'class' => 'noam148\imageresize\ImageResize',
 			'cachePath' => $this->cachePath,
 			'useFilename' => $this->useFilename,
 			'absoluteUrl' => $this->absoluteUrl,
