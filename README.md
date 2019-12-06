@@ -1,12 +1,8 @@
-!!! Sorry, the module is no longer maintained by me anymore !!!
--
-!!! Feel free to further develop the module !!!
--
-
-Image manager for Yii2
+Image manager for Yii2(基于noam148/yii2-image-manager)
 ========================
 
 A Yii2 module/widget for upload, manage and cropping images
+数据库支持mysql和postgresql
 
 Installation
 ------------
@@ -15,12 +11,12 @@ The preferred way to install this extension is through [composer](http://getcomp
 * Either run
 
 ```
-php composer.phar require "noam148/yii2-image-manager" "*" 
+php composer.phar require "haohetao/yii2-image-manager" "*" 
 ```
 or add
 
 ```json
-"noam148/yii2-image-manager" : "*"
+"haohetao/yii2-image-manager" : "*"
 ```
 
 to the require section of your application's `composer.json` file.
@@ -35,11 +31,10 @@ yii migrate --migrationPath=@noam148/imagemanager/migrations
 ```php
 'components' => [
     'imagemanager' => [
-		'class' => 'noam148\imagemanager\components\ImageManagerGetPath',
-		//set media path (outside the web folder is possible)
-		'mediaPath' => '/path/where/to/store/images/media/imagemanager',
-        //path relative web folder. In case of multiple environments (frontend, backend) add more paths 
-        'cachePath' =>  ['assets/images', '../../frontend/web/assets/images'],
+		'class' => 'haohetao\imagemanager\components\ImageManagerGetPath',
+		//set media path (outside the web folder is possible),可以使用别名
+		'mediaPath' => '@imageCommonPath/image-manager',
+        'urlPath' => '/image-manager',
 		//use filename (seo friendly) for resized images else use a hash
 		'useFilename' => true,
 		//show full url (for example in case of a API)
@@ -48,13 +43,20 @@ yii migrate --migrationPath=@noam148/imagemanager/migrations
 	],
 ],
 ```
+params-local.php
+```php
+<?php
+return [
+    'imageCommonUrl' => "http://localhost:9047",
+];
 
+```
 and in `modules` section, for example:
 
 ```php
 'modules' => [
 	'imagemanager' => [
-		'class' => 'noam148\imagemanager\Module',
+		'class' => 'haohetao\imagemanager\Module',
 		//set accces rules ()
 		'canUploadImage' => true,
 		'canRemoveImage' => function(){
@@ -65,7 +67,7 @@ and in `modules` section, for example:
 		'setBlameableBehavior' => false,
 		//add css files (to use in media manage selector iframe)
 		'cssFiles' => [
-			'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css',
+			'https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css',
 		],
 	],
 ],
@@ -83,7 +85,7 @@ http://www.example.com/imagemanager
 To load the image picker see below (make sure you have a field in you table where the module can store 'id' of the ImageManager table):
 
 ```php
-echo $form->field($model, 'ImageManager_id_avatar')->widget(\noam148\imagemanager\components\ImageManagerInputWidget::className(), [
+echo $form->field($model, 'ImageManager_id_avatar')->widget(\haohetao\imagemanager\components\ImageManagerInputWidget::className(), [
 	'aspectRatio' => (16/9), //set the aspect ratio
     'cropViewMode' => 1, //crop mode, option info: https://github.com/fengyuanchen/cropper/#viewmode
 	'showPreview' => true, //false to hide the preview

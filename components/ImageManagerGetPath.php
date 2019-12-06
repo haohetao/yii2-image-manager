@@ -8,12 +8,17 @@ use noam148\imagemanager\models\ImageManager;
 use yii\base\InvalidConfigException;
 use yii\db\Connection;
 
-class ImageManagerGetPath extends Component { 
+class ImageManagerGetPath extends Component {
 
 	/**
 	 * @var null|string $mediaPath Folder path in which the images are stored
 	 */
 	public $mediaPath = null;
+    /**
+     * url中的路径部分
+     * @var string
+     */
+	public $urlPath = '/image-manager';
 
 	/**
 	 * @var string|array $cachePath cache path(s) where store the resized images.
@@ -43,12 +48,13 @@ class ImageManagerGetPath extends Component {
 	 */
 	public function init() {
 		parent::init();
-
+        if ($this->mediaPath !== null) {
+            $this->mediaPath = Yii::getAlias($this->mediaPath);
+        }
         // If cachePath is not an array? Create an array
         if(!is_array($this->cachePath)){
             $this->cachePath = [$this->cachePath];
         }
-
 		// Initialize the compontent with the configuration loaded from config.php
 		\Yii::$app->set('imageresize', [
 			'class' => 'noam148\imageresize\ImageResize',
@@ -57,17 +63,12 @@ class ImageManagerGetPath extends Component {
 			'absoluteUrl' => $this->absoluteUrl,
 		]);
 
-		if (is_callable($this->databaseComponent)) {
-		    // The database component is callable, run the user function
-		    $this->databaseComponent = call_user_func($this->databaseComponent);
-        }
-
         // Check if the user input is correct
         $this->_checkVariables();
 	}
 
 	/**
-	 * Get the path for the given ImageManager_id record
+	 * Get the path for the given image_manager_id record
 	 * @param int $ImageManager_id ImageManager record for which the path needs to be generated
 	 * @param int $width Thumbnail image width
 	 * @param int $height Thumbnail image height
@@ -87,18 +88,39 @@ class ImageManagerGetPath extends Component {
 				$sMediaPath = $this->mediaPath;
 			}
 
-			$sFileExtension = pathinfo($mImageManager->fileName, PATHINFO_EXTENSION);
+			$sFileExtension = pathinfo($mImageManager->image_manager_filename, PATHINFO_EXTENSION);
 			//get image file path
-			$sImageFilePath = $sMediaPath . '/' . $mImageManager->id . '_' . $mImageManager->fileHash . '.' . $sFileExtension;
+			$sImageFilePath = $sMediaPath . '/' . $mImageManager->image_manager_id . '_' . $mImageManager->image_manager_filehash . '.' . $sFileExtension;
 			//check file exists
 			if (file_exists($sImageFilePath)) {
-				$return = \Yii::$app->imageresize->getUrl($sImageFilePath, $width, $height, $thumbnailMode, null, $mImageManager->fileName);
+				$return = \Yii::$app->imageresize->getUrl($sImageFilePath, $width, $height, $thumbnailMode, null, $mImageManager->image_manager_filename);
 			} else {
 				$return = null; //isset(\Yii::$app->controller->module->assetPublishedUrl) ? \Yii::$app->controller->module->assetPublishedUrl. "/img/img_no-image.png" : null;
 			}
 		}
 		return $return;
 	}
+
+    /**
+     * 返回原始图片路径或URL
+     * @param $id
+     * @param bool $absoluteUrl
+     * @return string|null
+     */
+	public function getOriginalPath($id, $absoluteUrl = true)
+    {
+        $return = null;
+        $url = '';
+        if ($absoluteUrl) {
+            if (!isset(Yii::$app->params['imageCommonUrl'])) {
+                throw new InvalidConfigException('imageCommonUrl param must exists in params.php o params-local.php.');
+            }
+            $url = Yii::$app->params['imageCommonUrl'];
+        }
+        $model = ImageManager::findOne($id);
+        $return = $url . $this->urlPath . '/' . $id . '_' . $model->image_manager_filehash . '.' . pathinfo($model->image_manager_filename, PATHINFO_EXTENSION);
+        return $return;
+    }
 
     /**
      * Check if the user configurable variables match the criteria
@@ -116,8 +138,8 @@ class ImageManagerGetPath extends Component {
         }
 
         // Check to make sure that the $databaseComponent is a yii\db\Connection object
-        if (($databaseComponentClassName = get_class(Yii::$app->get($this->databaseComponent))) !== ($connectionClassName = Connection::className())) {
-            throw new InvalidConfigException("Image Manager Component - Init: Database component '$this->databaseComponent' is not of type '$connectionClassName' instead it is '$databaseComponentClassName'");
+        if ($this->databaseComponent instanceof Connection) {
+            throw new InvalidConfigException("Image Manager Component - Init: Database component '$this->databaseComponent' is not of type 'Connection' ");
         }
     }
 

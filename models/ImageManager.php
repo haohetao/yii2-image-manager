@@ -11,15 +11,15 @@ use yii\behaviors\BlameableBehavior;
 /**
  * This is the model class for table "ImageManager".
  *
- * @property integer $id
- * @property string $fileName
- * @property string $fileHash
- * @property string $created
- * @property string $modified
- * @property string $createdBy
- * @property string $modifiedBy
+ * @property integer $image_manager_id
+ * @property string $image_manager_filename
+ * @property string $image_manager_filehash
+ * @property string $image_manager_create_datetime
+ * @property string $image_manager_update_datetime
+ * @property string $image_manager_create_account
+ * @property string $image_manager_update_account
  */
-class ImageManager extends \yii\db\ActiveRecord { 
+class ImageManager extends \yii\db\ActiveRecord {
 
 	/**
 	 * Set Created date to now
@@ -30,8 +30,8 @@ class ImageManager extends \yii\db\ActiveRecord {
 	    // Add the time stamp behavior
         $aBehaviors[] = [
             'class' => TimestampBehavior::className(),
-            'createdAtAttribute' => 'created',
-            'updatedAtAttribute' => 'modified',
+            'createdAtAttribute' => 'image_manager_create_datetime',
+            'updatedAtAttribute' => 'image_manager_update_datetime',
             'value' => new Expression('NOW()'),
         ];
 
@@ -43,9 +43,9 @@ class ImageManager extends \yii\db\ActiveRecord {
             if ($moduleImageManager->setBlameableBehavior) {
                 // Module has blame able behavior
                 $aBehaviors[] = [
-                    'class' => BlameableBehavior::className(),
-                    'createdByAttribute' => 'createdBy',
-                    'updatedByAttribute' => 'modifiedBy',
+                    'class' => BlameableBehavior::class,
+                    'createdByAttribute' => 'image_manager_create_account',
+                    'updatedByAttribute' => 'image_manager_update_account',
                 ];
             }
         }
@@ -57,7 +57,7 @@ class ImageManager extends \yii\db\ActiveRecord {
 	 * @inheritdoc
 	 */
 	public static function tableName() {
-		return '{{%ImageManager}}';
+		return '{{%image_manager}}';
 	}
 
     /**
@@ -86,10 +86,10 @@ class ImageManager extends \yii\db\ActiveRecord {
 	 */
 	public function rules() {
 		return [
-			[['fileName', 'fileHash'], 'required'],
-			[['created', 'modified'], 'safe'],
-			[['fileName'], 'string', 'max' => 128],
-			[['fileHash'], 'string', 'max' => 32],
+			[['image_manager_filename', 'image_manager_filehash'], 'required'],
+			[['image_manager_create_datetime', 'modified'], 'safe'],
+			[['image_manager_filename'], 'string', 'max' => 128],
+			[['image_manager_filehash'], 'string', 'max' => 32],
 		];
 	}
 
@@ -98,13 +98,13 @@ class ImageManager extends \yii\db\ActiveRecord {
 	 */
 	public function attributeLabels() {
 		return [
-			'id' => Yii::t('imagemanager', 'ID'),
-			'fileName' => Yii::t('imagemanager', 'File Name'),
-			'fileHash' => Yii::t('imagemanager', 'File Hash'),
-			'created' => Yii::t('imagemanager', 'Created'),
-			'modified' => Yii::t('imagemanager', 'Modified'),
-			'createdBy' => Yii::t('imagemanager', 'Created by'),
-			'modifiedBy' => Yii::t('imagemanager', 'Modified by'),
+			'image_manager_id' => Yii::t('imagemanager', 'ID'),
+			'image_manager_filename' => Yii::t('imagemanager', 'File Name'),
+			'image_manager_filehash' => Yii::t('imagemanager', 'File Hash'),
+			'image_manager_create_datetime' => Yii::t('imagemanager', 'Created'),
+			'image_manager_update_datetime' => Yii::t('imagemanager', 'Modified'),
+			'image_manager_create_account' => Yii::t('imagemanager', 'Created by'),
+			'image_manager_update_account' => Yii::t('imagemanager', 'Modified by'),
 		];
 	}
 
@@ -127,9 +127,9 @@ class ImageManager extends \yii\db\ActiveRecord {
 		$return = null;
 		//set media path
 		$sMediaPath = \Yii::$app->imagemanager->mediaPath;
-		$sFileExtension = pathinfo($this->fileName, PATHINFO_EXTENSION);
+		$sFileExtension = pathinfo($this->image_manager_filename, PATHINFO_EXTENSION);
 		//get image file path
-		$sImageFilePath = $sMediaPath . '/' . $this->id . '_' . $this->fileHash . '.' . $sFileExtension;
+		$sImageFilePath = $sMediaPath . '/' . $this->image_manager_id . '_' . $this->image_manager_filehash . '.' . $sFileExtension;
 		//check file exists
 		if (file_exists($sImageFilePath)) {
 			$return = $sImageFilePath;
@@ -146,9 +146,9 @@ class ImageManager extends \yii\db\ActiveRecord {
 		$return = ['width' => 0, 'height' => 0, 'size' => 0];
 		//set media path
 		$sMediaPath = \Yii::$app->imagemanager->mediaPath;
-		$sFileExtension = pathinfo($this->fileName, PATHINFO_EXTENSION);
+		$sFileExtension = pathinfo($this->image_manager_filename, PATHINFO_EXTENSION);
 		//get image file path
-		$sImageFilePath = $sMediaPath . '/' . $this->id . '_' . $this->fileHash . '.' . $sFileExtension;
+		$sImageFilePath = $sMediaPath . '/' . $this->image_manager_id . '_' . $this->image_manager_filehash . '.' . $sFileExtension;
 		//check file exists
 		if (file_exists($sImageFilePath)) {
 			$aImageDimension = getimagesize($sImageFilePath);

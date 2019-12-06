@@ -70,7 +70,7 @@ class ImageManagerInputWidget extends InputWidget {
             $ImageManager_fileName = null;
             $mImageManager = ImageManager::findOne($ImageManager_id);
             if ($mImageManager !== null) {
-                $ImageManager_fileName = $mImageManager->fileName;
+                $ImageManager_fileName = $mImageManager->image_manager_filename;
             }
             //create field
             $field .= Html::textInput($this->attribute, $ImageManager_fileName, ['class' => 'form-control', 'id' => $sFieldNameId, 'readonly' => true]);
@@ -89,7 +89,7 @@ class ImageManagerInputWidget extends InputWidget {
         //show preview if is true
         if ($this->showPreview == true) {
             $sHideClass = ($mImageManager == null) ? "hide" : "";
-            $sImageSource = isset($mImageManager->id) ? \Yii::$app->imagemanager->getImagePath($mImageManager->id, 500, 500, 'inset') : "";
+            $sImageSource = isset($mImageManager->image_manager_id) ? \Yii::$app->imagemanager->getImagePath($mImageManager->image_manager_id, 500, 500, 'inset') : "";
 
             $field .= '<div class="image-wrapper ' . $sHideClass . '">'
                     . '<img id="' . $sFieldId . '_image" alt="Thumbnail" class="img-responsive img-preview" src="' . $sImageSource . '">'

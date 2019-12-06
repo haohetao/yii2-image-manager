@@ -14,7 +14,7 @@ use noam148\imagemanager\Module;
 class ImageManagerSearch extends ImageManager
 {
 	public $globalSearch;
-	
+
     /**
      * @inheritdoc
      */
@@ -52,7 +52,7 @@ class ImageManagerSearch extends ImageManager
 			'pagination' => [
 				'pagesize' => 100,
 			],
-			'sort'=> ['defaultOrder' => ['created'=>SORT_DESC]]
+			'sort'=> ['defaultOrder' => ['image_manager_create_datetime'=>SORT_DESC]]
         ]);
 
         $this->load($params);
@@ -67,12 +67,12 @@ class ImageManagerSearch extends ImageManager
         $module = Module::getInstance();
 
         if ($module->setBlameableBehavior) {
-            $query->andWhere(['createdBy' => Yii::$app->user->id]);
+            $query->andWhere(['image_manager_create_account' => Yii::$app->user->id]);
         }
 
-        $query->orFilterWhere(['like', 'fileName', $this->globalSearch])
-            ->orFilterWhere(['like', 'created', $this->globalSearch])
-			->orFilterWhere(['like', 'modified', $this->globalSearch]);
+        $query->orFilterWhere(['like', 'image_manager_filename', $this->globalSearch])
+            ->orFilterWhere(['like', 'image_manager_create_datetime', $this->globalSearch])
+			->orFilterWhere(['like', 'image_manager_update_datetime', $this->globalSearch]);
 
         return $dataProvider;
     }
