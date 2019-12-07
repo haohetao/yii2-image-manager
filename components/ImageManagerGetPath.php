@@ -112,10 +112,11 @@ class ImageManagerGetPath extends Component {
         $return = null;
         $url = '';
         if ($absoluteUrl) {
-            if (!isset(Yii::$app->params['imageCommonUrl'])) {
-                throw new InvalidConfigException('imageCommonUrl param must exists in params.php o params-local.php.');
+            if (isset(Yii::$app->params['imageCommonUrl'])) {
+                $url = Yii::$app->params['imageCommonUrl'];
+            } else {
+                $url = Yii::getAlias('@web');
             }
-            $url = Yii::$app->params['imageCommonUrl'];
         }
         $model = ImageManager::findOne($id);
         $return = $url . $this->urlPath . '/' . $id . '_' . $model->image_manager_filehash . '.' . pathinfo($model->image_manager_filename, PATHINFO_EXTENSION);
